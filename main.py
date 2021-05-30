@@ -5,17 +5,26 @@ import torch
 from torch import optim
 from tqdm import tqdm
 import numpy as np
+from model import Model
+import torch.utils.data as data
 
 if __name__ == '__main__':
     # tokenizer = Wav2Vec2CTCTokenizer.from_pretrained('bert-base-uncase
-    train_data = Dogdataset('./dataset/train/', './dataset/meta_train.csv', True)
-    train_dataloader = DataLoader(train_data, batch_size=10, shuffle=True)
+    dataset = Dogdataset('./dataset/train/', './dataset/meta_train.csv', True)
+
+    train_set_size = int(len(dataset) * 0.8)
+    valid_set_size = len(dataset) - train_set_size
+    train_dataset, valid_dataset = data.random_split(dataset, [train_set_size, valid_set_size])
+
+    train_dataloader = DataLoader(train_dataset, batch_size=10, shuffle=True)
+    valid_dataloader = DataLoader(valid_dataset, batch_size=10, shuffle=True)
 
     # Get cpu or gpu device for training.
     device = "cuda" if torch.cuda.is_available() else "cpu"
     print("Using {} device".format(device))
 
-    model = BertForSequenceClassification.from_pretrained('bert-base-uncased', num_labels=6).to(device)
+    #model = BertForSequenceClassification.from_pretrained('bert-base-uncased', num_labels=6).to(device)
+    model = Model(128, 6).to(device)
 
     print(model)
     # 定義optimizer和loss_function
@@ -41,9 +50,9 @@ if __name__ == '__main__':
         model.train()
         for data, target in tqdm(train_dataloader):
             # move tensors to GPU if CUDA is available
-            print(data, target)
-            data, target = torch.tensor(data).to(device).long(), target.cuda()
-            print(data.shape)
+            #print(data, target)
+            data, target = data.cuda(), target.cuda()
+            #print(data.shape)
             # clear the gradients of all optimized variables
             optimizer.zero_grad()
             # forward pass: compute predicted outputs by passing inputs to the model
@@ -71,7 +80,7 @@ if __name__ == '__main__':
         ######################
         model.eval()
         with torch.no_grad():
-            for data, target in tqdm(train_dataloader):
+            for data, target in tqdm(valid_dataloader):
                 # move tensors to GPU if CUDA is available
 
                 data, target = data.cuda(), target.cuda()
@@ -93,10 +102,10 @@ if __name__ == '__main__':
         # calculate average losses
         # train_losses.append(train_loss/len(train_loader.dataset))
         # valid_losses.append(valid_loss.item()/len(valid_loader.dataset)
-        train_loss = train_loss / len(train_dataloader)
-        valid_loss = valid_loss / len(train_dataloader)
-        train_correct = 100. * train_correct / len(train_dataloader)
-        valid_correct = 100. * valid_correct / len(train_dataloader)
+        train_loss = train_loss / len(train_dataset)
+        valid_loss = valid_loss / len(valid_dataset)
+        train_correct = 100. * train_correct / len(train_dataset)
+        valid_correct = 100. * valid_correct / len(valid_dataset)
 
         # print training/validation statistics
         print(
