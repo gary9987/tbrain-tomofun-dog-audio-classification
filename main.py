@@ -7,10 +7,22 @@ from tqdm import tqdm
 import numpy as np
 from model import Model
 import torch.utils.data as data
+import torchvision
+import torch.nn as nn
+import torchvision.transforms as transforms
+
 
 if __name__ == '__main__':
     # tokenizer = Wav2Vec2CTCTokenizer.from_pretrained('bert-base-uncase
-    dataset = Dogdataset('./dataset/train/', './dataset/meta_train.csv', True)
+
+    transform_train = transforms.Compose([
+        transforms.Resize((224, 224)),
+        transforms.RandomHorizontalFlip(),
+        transforms.ToTensor(),
+        transforms.Normalize([0.485], [0.229])
+    ])
+
+    dataset = Dogdataset('./dataset/train/', './dataset/meta_train.csv', True, transform=transform_train)
 
     train_set_size = int(len(dataset) * 0.8)
     valid_set_size = len(dataset) - train_set_size
@@ -24,7 +36,19 @@ if __name__ == '__main__':
     print("Using {} device".format(device))
 
     #model = BertForSequenceClassification.from_pretrained('bert-base-uncased', num_labels=6).to(device)
-    model = Model(128, 6).to(device)
+    #model = Model(128, 6).to(device)
+    model = torchvision.models.resnet18(pretrained=True)
+    print(model)
+    num_features = model.fc.in_features
+    model.fc = nn.Sequential(
+        nn.Dropout(0.5),
+        nn.Linear(num_features, 6),
+        nn.Softmax(1)
+    )
+    #model.fc = nn.Linear(num_features, 6)
+
+    model.conv1 = nn.Conv2d(1, 64, kernel_size=(7, 7), stride=(2, 2), padding=(3, 3), bias=False)
+    model.to(device)
 
     print(model)
     # 定義optimizer和loss_function
