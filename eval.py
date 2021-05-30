@@ -19,8 +19,8 @@ if __name__ == '__main__':
     dataset = Dogdataset('./dataset/public_test/', is_train=False, transform=transform)
     dataloader = DataLoader(dataset, batch_size=1, shuffle=False)
 
-    device = 'cpu'
-    #device = 'cuda' if torch.cuda.is_available() else 'cpu'
+    #device = 'cpu'
+    device = 'cuda' if torch.cuda.is_available() else 'cpu'
     net = torchvision.models.resnet18(pretrained=True)
     num_features = net.fc.in_features
     net.fc = nn.Sequential(
@@ -39,8 +39,9 @@ if __name__ == '__main__':
         writer.writerow(['Filename', 'Barking', 'Howling', 'Crying', 'COSmoke', 'GlassBreaking', 'Other'])
         with torch.no_grad():
             for data, filename in tqdm(dataloader):
-                data.to(device)
+                data, target = data.cuda(), data.cuda()
                 output = net(data)
+
                 output = output.tolist()[0]
                 #print(filename[0]+out)
                 writer.writerow([filename[0]]+output)
