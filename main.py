@@ -16,8 +16,7 @@ if __name__ == '__main__':
     # tokenizer = Wav2Vec2CTCTokenizer.from_pretrained('bert-base-uncase
 
     transform_train = transforms.Compose([
-        transforms.Resize((224, 224)),
-        transforms.RandomHorizontalFlip(),
+        transforms.Resize((128, 79)),
         transforms.ToTensor(),
         transforms.Normalize([0.485], [0.229])
     ])
@@ -39,14 +38,19 @@ if __name__ == '__main__':
     #model = Model(128, 6).to(device)
     model = torchvision.models.resnet18(pretrained=True)
     print(model)
+    for k, v in model.named_parameters():
+        #print(k)
+        if (k == 'bn1.weight' or k == 'bn1.bias'):
+            v.requires_grad = False
+        if (k[0:6] == 'layer1' or k[0:6] == 'layer2'):
+            v.requires_grad = False
+
     num_features = model.fc.in_features
     model.fc = nn.Sequential(
         nn.Dropout(0.5),
         nn.Linear(num_features, 6),
         nn.Softmax(1)
     )
-    #model.fc = nn.Linear(num_features, 6)
-
     model.conv1 = nn.Conv2d(1, 64, kernel_size=(7, 7), stride=(2, 2), padding=(3, 3), bias=False)
     model.to(device)
 
