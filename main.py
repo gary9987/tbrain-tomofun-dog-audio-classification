@@ -13,6 +13,8 @@ import torchvision.transforms as transforms
 
 
 if __name__ == '__main__':
+    # set torch random seed
+    torch.manual_seed(17)
     # tokenizer = Wav2Vec2CTCTokenizer.from_pretrained('bert-base-uncase
 
     transform_train = transforms.Compose([
@@ -36,7 +38,7 @@ if __name__ == '__main__':
 
     #model = BertForSequenceClassification.from_pretrained('bert-base-uncased', num_labels=6).to(device)
     #model = Model(128, 6).to(device)
-    model = torchvision.models.resnet18(pretrained=True)
+    model = torchvision.models.resnet50(pretrained=True)
     print(model)
     for k, v in model.named_parameters():
         #print(k)
