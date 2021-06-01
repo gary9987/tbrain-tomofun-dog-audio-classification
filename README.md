@@ -17,8 +17,13 @@ dataset
 - [Github: Transformers](https://github.com/huggingface/transformers)
 - [Github: SpecAugment](https://github.com/DemisEom/SpecAugment)
 - [第十九屆旺宏科學獎 成果報告書](https://www.mxeduc.org.tw/scienceaward/history/projectDoc/19th/doc/SA19-226_final.pdf)
-- [Environmental Sound Classification Base on CNN and LightGBM](https://image.hanspub.org/Html/10-1541547_32564.htm)
+- [基于CNN和LightGBM的环境声音分类](https://www.hanspub.org/journal/PaperInformation.aspx?PaperID=32564&#f5)
+- [LightGBM](https://github.com/microsoft/LightGBM)
+- [Day 16 — LightGBM](https://medium.com/@falconives/day-16-lightgbm-aa447494a763)
+- [LightGBM两种使用方式](https://www.cnblogs.com/chenxiangzhen/p/10894306.html)
 - [librosa语音信号处理](https://www.cnblogs.com/LXP-Never/p/11561355.html)
+- [urbansound8資料集 Kaggle也有](https://urbansounddataset.weebly.com/urbansound8k.html)
+- [urbansound8資料集 download link](https://zenodo.org/record/1203745/files/UrbanSound8K.tar.gz)
 ## Discussion
 - Wav2Vec2CTCTokenizer
 - BertForSequenceClassification
