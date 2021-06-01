@@ -24,7 +24,6 @@ if __name__ == '__main__':
     net = torchvision.models.resnet18(pretrained=True)
     num_features = net.fc.in_features
     net.fc = nn.Sequential(
-        nn.Dropout(0.5),
         nn.Linear(num_features, 6),
         nn.Softmax(1)
     )
