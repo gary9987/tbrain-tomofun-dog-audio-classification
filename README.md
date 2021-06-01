@@ -33,3 +33,69 @@ dataset
 	audio, sampling_rate = librosa.load(input_file, sr=22050)
 	mfccs = librosa.feature.mfcc(audio, sr=22050, n_mfcc=128)
 	```
+
+## Resnet18
+```
+conv1.weight False
+bn1.weight False
+bn1.bias False
+layer1.0.conv1.weight False
+layer1.0.bn1.weight False
+layer1.0.bn1.bias False
+layer1.0.conv2.weight False
+layer1.0.bn2.weight False
+layer1.0.bn2.bias False
+layer1.1.conv1.weight False
+layer1.1.bn1.weight False
+layer1.1.bn1.bias False
+layer1.1.conv2.weight False
+layer1.1.bn2.weight False
+layer1.1.bn2.bias False
+layer2.0.conv1.weight False
+layer2.0.bn1.weight False
+layer2.0.bn1.bias False
+layer2.0.conv2.weight False
+layer2.0.bn2.weight False
+layer2.0.bn2.bias False
+layer2.0.downsample.0.weight False
+layer2.0.downsample.1.weight False
+layer2.0.downsample.1.bias False
+layer2.1.conv1.weight False
+layer2.1.bn1.weight False
+layer2.1.bn1.bias False
+layer2.1.conv2.weight False
+layer2.1.bn2.weight False
+layer2.1.bn2.bias False
+layer3.0.conv1.weight True
+layer3.0.bn1.weight True
+layer3.0.bn1.bias True
+layer3.0.conv2.weight True
+layer3.0.bn2.weight True
+layer3.0.bn2.bias True
+layer3.0.downsample.0.weight True
+layer3.0.downsample.1.weight True
+layer3.0.downsample.1.bias True
+layer3.1.conv1.weight True
+layer3.1.bn1.weight True
+layer3.1.bn1.bias True
+layer3.1.conv2.weight True
+layer3.1.bn2.weight True
+layer3.1.bn2.bias True
+layer4.0.conv1.weight True
+layer4.0.bn1.weight True
+layer4.0.bn1.bias True
+layer4.0.conv2.weight True
+layer4.0.bn2.weight True
+layer4.0.bn2.bias True
+layer4.0.downsample.0.weight True
+layer4.0.downsample.1.weight True
+layer4.0.downsample.1.bias True
+layer4.1.conv1.weight True
+layer4.1.bn1.weight True
+layer4.1.bn1.bias True
+layer4.1.conv2.weight True
+layer4.1.bn2.weight True
+layer4.1.bn2.bias True
+fc.weight True
+fc.bias True
+'''

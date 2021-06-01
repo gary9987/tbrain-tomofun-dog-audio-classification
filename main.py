@@ -7,26 +7,55 @@ from tqdm import tqdm
 import numpy as np
 from model import Model
 import torch.utils.data as data
+import torchvision
+import torch.nn as nn
+import torchvision.transforms as transforms
+
 
 if __name__ == '__main__':
+    # set torch random seed
+    torch.manual_seed(17)
     # tokenizer = Wav2Vec2CTCTokenizer.from_pretrained('bert-base-uncase
-    dataset = Dogdataset('./dataset/train/', './dataset/meta_train.csv', True)
+
+    transform_train = transforms.Compose([
+        transforms.Resize((128, 216)),
+        transforms.ToTensor(),
+        transforms.Normalize([0.485], [0.229])
+    ])
+
+    dataset = Dogdataset('./dataset/train/', './dataset/meta_train.csv', True, transform=transform_train)
 
     train_set_size = int(len(dataset) * 0.8)
     valid_set_size = len(dataset) - train_set_size
     train_dataset, valid_dataset = data.random_split(dataset, [train_set_size, valid_set_size])
 
-    train_dataloader = DataLoader(train_dataset, batch_size=10, shuffle=True)
-    valid_dataloader = DataLoader(valid_dataset, batch_size=10, shuffle=True)
+    train_dataloader = DataLoader(train_dataset, batch_size=10, shuffle=True, num_workers=4)
+    valid_dataloader = DataLoader(valid_dataset, batch_size=10, shuffle=True, num_workers=4)
 
     # Get cpu or gpu device for training.
     device = "cuda" if torch.cuda.is_available() else "cpu"
     print("Using {} device".format(device))
 
     #model = BertForSequenceClassification.from_pretrained('bert-base-uncased', num_labels=6).to(device)
-    model = Model(128, 6).to(device)
+    #model = Model(128, 6).to(device)
+    model = torchvision.models.resnet18(pretrained=True)
 
+    for k, v in model.named_parameters():
+        #print(k)
+        if (k == 'bn1.weight' or k == 'bn1.bias'):
+            v.requires_grad = False
+        if (k[0:6] == 'layer1'):
+            v.requires_grad = False
+
+    num_features = model.fc.in_features
+    model.fc = nn.Sequential(
+        nn.Linear(num_features, 6),
+        nn.Softmax(1)
+    )
+    model.conv1 = nn.Conv2d(1, 64, kernel_size=(7, 7), stride=(2, 2), padding=(3, 3), bias=False)
+    model.to(device)
     print(model)
+
     # 定義optimizer和loss_function
     optimizer = optim.Adam(model.parameters(), lr=0.0001)
     criterion = torch.nn.CrossEntropyLoss()
