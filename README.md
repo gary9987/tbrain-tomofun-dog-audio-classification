@@ -24,6 +24,7 @@ dataset
 - [librosa语音信号处理](https://www.cnblogs.com/LXP-Never/p/11561355.html)
 - [urbansound8資料集 Kaggle也有](https://urbansounddataset.weebly.com/urbansound8k.html)
 - [urbansound8資料集 download link](https://zenodo.org/record/1203745/files/UrbanSound8K.tar.gz)
+- [pytorch提取中間層輸出](https://segmentfault.com/a/1190000039426499)
 ## Discussion
 - Wav2Vec2CTCTokenizer
 - BertForSequenceClassification
@@ -36,6 +37,9 @@ dataset
 
 ## Resnet18
 ```
+for k,v in net.named_parameters():
+    print(k, v.requires_grad)
+'''
 conv1.weight False
 bn1.weight False
 bn1.bias False
@@ -98,4 +102,5 @@ layer4.1.bn2.weight True
 layer4.1.bn2.bias True
 fc.weight True
 fc.bias True
+'''
 '''
