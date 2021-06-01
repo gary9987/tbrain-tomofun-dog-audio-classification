@@ -56,7 +56,6 @@ if __name__ == '__main__':
     model.to(device)
     print(model)
 
-    print(model)
     # 定義optimizer和loss_function
     optimizer = optim.Adam(model.parameters(), lr=0.0001)
     criterion = torch.nn.CrossEntropyLoss()
