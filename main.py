@@ -29,8 +29,8 @@ if __name__ == '__main__':
     valid_set_size = len(dataset) - train_set_size
     train_dataset, valid_dataset = data.random_split(dataset, [train_set_size, valid_set_size])
 
-    train_dataloader = DataLoader(train_dataset, batch_size=10, shuffle=True)
-    valid_dataloader = DataLoader(valid_dataset, batch_size=10, shuffle=True)
+    train_dataloader = DataLoader(train_dataset, batch_size=10, shuffle=True, num_workers=4)
+    valid_dataloader = DataLoader(valid_dataset, batch_size=10, shuffle=True, num_workers=4)
 
     # Get cpu or gpu device for training.
     device = "cuda" if torch.cuda.is_available() else "cpu"

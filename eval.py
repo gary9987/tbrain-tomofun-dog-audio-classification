@@ -11,13 +11,13 @@ import torchvision
 
 if __name__ == '__main__':
     transform = transforms.Compose([
-        transforms.Resize((128, 79)),
+        transforms.Resize((128, 216)),
         transforms.ToTensor(),
         transforms.Normalize([0.485], [0.229])
     ])
 
     dataset = Dogdataset('./dataset/public_test/', is_train=False, transform=transform)
-    dataloader = DataLoader(dataset, batch_size=1, shuffle=False)
+    dataloader = DataLoader(dataset, batch_size=40, shuffle=False, num_workers=4)
 
     #device = 'cpu'
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
@@ -40,8 +40,8 @@ if __name__ == '__main__':
             for data, filename in tqdm(dataloader):
                 data, target = data.cuda(), data.cuda()
                 output = net(data)
-
-                output = output.tolist()[0]
-                #print(filename[0]+out)
-                writer.writerow([filename[0]]+output)
+                for i in range(len(output)):
+                    probs = output.tolist()[i]
+                    #print(filename[i]+probs)
+                    writer.writerow([filename[i]]+probs)
 
