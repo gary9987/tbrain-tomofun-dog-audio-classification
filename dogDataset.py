@@ -23,8 +23,8 @@ class Dogdataset(data.Dataset):
 
     def __getitem__(self, index):
         input_file = self.files_list[index]  # input_file 是路徑
-        audio, sampling_rate = librosa.load(input_file, sr=None)
-        mfccs = librosa.feature.mfcc(audio, sr=sampling_rate, n_mfcc=128)
+        audio, sampling_rate = librosa.load(input_file, sr=22050)
+        mfccs = librosa.feature.mfcc(audio, sr=22050, n_mfcc=128)
         #mfccs = mfccs.reshape((1, 128, 79))
         if(self.transform):
             mfccs = self.transform(Image.fromarray(mfccs))
