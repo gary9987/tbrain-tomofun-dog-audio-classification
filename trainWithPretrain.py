@@ -39,25 +39,34 @@ if __name__ == '__main__':
     #model = BertForSequenceClassification.from_pretrained('bert-base-uncased', num_labels=6).to(device)
     #model = Model(128, 6).to(device)
     model = torchvision.models.resnet18(pretrained=False)
-    for k, v in model.named_parameters():
-        #print(k)
-        if (k == 'conv1.weight' or k == 'bn1.weight' or k == 'bn1.bias'):
-            v.requires_grad = False
-        if (k[0:6] == 'layer1' or k[0:6] == 'layer2'):
-            v.requires_grad = False
+    model.conv1 = nn.Conv2d(1, 64, kernel_size=(7, 7), stride=(2, 2), padding=(3, 3), bias=False)
 
+    # Mod for load pretrain model
     num_features = model.fc.in_features
+    model.fc = nn.Sequential(
+        nn.Linear(num_features, 10),
+        nn.Softmax(1)
+    )
+    # Load pretrain model
+    model.load_state_dict(torch.load('pretrain.pth'))
+    # Mod for classify to 6 class
     model.fc = nn.Sequential(
         nn.Linear(num_features, 6),
         nn.Softmax(1)
     )
-    model.conv1 = nn.Conv2d(1, 64, kernel_size=(7, 7), stride=(2, 2), padding=(3, 3), bias=False)
-    model.load_state_dict(torch.load('model_CNN.pth'))
+    '''
+    for k, v in model.named_parameters():
+        #print(k)
+        if ( k == 'bn1.weight' or k == 'bn1.bias'):
+            v.requires_grad = False
+        if (k[0:6] == 'layer1'):
+            v.requires_grad = False
+    '''
     model.to(device)
     print(model)
 
     # 定義optimizer和loss_function
-    optimizer = optim.Adam(model.parameters(), lr=0.000001)
+    optimizer = optim.Adam(model.parameters(), lr=0.01)
     criterion = torch.nn.CrossEntropyLoss()
 
     # number of epochs to train the model
