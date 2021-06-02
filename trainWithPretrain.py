@@ -43,7 +43,7 @@ if __name__ == '__main__':
         #print(k)
         if (k == 'conv1.weight' or k == 'bn1.weight' or k == 'bn1.bias'):
             v.requires_grad = False
-        if (k[0:6] == 'layer1'):
+        if (k[0:6] == 'layer1' or k[0:6] == 'layer2'):
             v.requires_grad = False
 
     num_features = model.fc.in_features
