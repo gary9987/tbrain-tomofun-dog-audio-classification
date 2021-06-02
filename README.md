@@ -25,7 +25,7 @@ dataset
 - [urbansound8資料集 Kaggle也有](https://urbansounddataset.weebly.com/urbansound8k.html)
 - [urbansound8資料集 download link](https://zenodo.org/record/1203745/files/UrbanSound8K.tar.gz)
 - [pytorch提取中間層輸出](https://segmentfault.com/a/1190000039426499)
-- [LGBM參數設定](https://lightgbm.readthedocs.io/en/latest/Python-Intro.html)
+- [LGBM參數設定](https://lightgbm.readthedocs.io/en/latest/Parameters.html)
 ## Discussion
 - Wav2Vec2CTCTokenizer
 - BertForSequenceClassification

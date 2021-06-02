@@ -74,7 +74,7 @@ if __name__ == '__main__':
     lgb_train = lgb.Dataset(X_train, y_train)
     lgb_valid = lgb.Dataset(X_test, y_test, reference=lgb_train)
 
-    param = {'num_leaves': 15, 'objective': 'multiclass', 'num_class': 6, 'max_depth': 10, 'boosting': 'gbdt',
+    param = {'num_leaves': 30, 'objective': 'multiclass', 'num_class': 6, 'max_depth': -1, 'boosting': 'gbdt',
              'learning_rate': 0.01, 'num_threads': 8, 'verbose': 1}
 
     bst = lgb.train(param, lgb_train, num_boost_round=5000, valid_sets=lgb_valid, early_stopping_rounds=5)
