@@ -10,9 +10,12 @@ import torch.utils.data as data
 import numpy as np
 import lightgbm as lgb
 from sklearn.model_selection import train_test_split
-
+from sklearn.metrics import log_loss
 
 if __name__ == '__main__':
+
+    # set torch random seed
+    torch.manual_seed(17)
 
     transform_train = transforms.Compose([
         transforms.Resize((128, 216)),
@@ -45,14 +48,14 @@ if __name__ == '__main__':
     # 製作Train LGBM 的資料格式
     dataset = Dogdataset('./dataset/train/', './dataset/meta_train.csv', True, transform=transform_train)
     train_set_size = int(len(dataset) * 0.8)
-    valid_set_size = len(dataset) - train_set_size
-    train_dataset, valid_dataset = data.random_split(dataset, [train_set_size, valid_set_size])
+    eval_set_size = len(dataset) - train_set_size
+    train_dataset, eval_dataset = data.random_split(dataset, [train_set_size, eval_set_size])
 
     train_dataloader = DataLoader(train_dataset, batch_size=10, shuffle=True, num_workers=4)
-    valid_dataloader = DataLoader(valid_dataset, batch_size=10, shuffle=True, num_workers=4)
+    eval_dataloader = DataLoader(eval_dataset, batch_size=10, shuffle=True, num_workers=4)
 
-    allfeatures = []
-    alllabels = []
+    trainfeatures = []
+    trainlabels = []
 
     with torch.no_grad():
         for data, label in tqdm(train_dataloader):
@@ -60,14 +63,14 @@ if __name__ == '__main__':
             _, features = net(data)
             for f in features['layer4.1.bn2']:
                 f = f.reshape(512*4*7).tolist() # Flatten
-                allfeatures.append(f)
+                trainfeatures.append(f)
             for l in label:
-                alllabels.append(int(l))
+                trainlabels.append(int(l))
 
-    data = np.array(allfeatures)
-    label = np.array(alllabels)
+    data = np.array(trainfeatures)
+    label = np.array(trainlabels)
 
-    X_train, X_test, y_train, y_test = train_test_split(data, label, test_size=0.2)
+    X_train, X_test, y_train, y_test = train_test_split(data, label, test_size=0.2, random_state=17)
     lgb_train = lgb.Dataset(X_train, y_train)
     lgb_valid = lgb.Dataset(X_test, y_test, reference=lgb_train)
 
@@ -81,15 +84,21 @@ if __name__ == '__main__':
 
     # 模型加载
     gbm = lgb.Booster(model_file='LGBMModel.txt')
-    
-    # 模型预测
-    y_pred = gbm.predict(X_test, num_iteration=gbm.best_iteration)
-
-    '''
-    model_output, features = net(mfccs.cuda())
-    print(model_output)
-    feature_shapes = {name: f.shape for name, f in features.items()}
-    print(feature_shapes)
-    '''
 
 
+    evalfeatures = []
+    evallabels = []
+    with torch.no_grad():
+        for data, label in tqdm(eval_dataloader):
+            data, target = data.cuda(), label.cuda()
+            _, features = net(data)
+            for f in features['layer4.1.bn2']:
+                f = f.reshape(512*4*7).tolist() # Flatten
+                evalfeatures.append(f)
+            for l in label:
+                evallabels.append(int(l))
+
+
+    # 評估模型表現
+    eval = gbm.predict(evalfeatures, num_iteration=gbm.best_iteration)
+    print('The log_loss of prediction is:', log_loss(evallabels, eval))
