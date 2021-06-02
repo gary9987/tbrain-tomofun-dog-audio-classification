@@ -57,7 +57,7 @@ if __name__ == '__main__':
     print(model)
 
     # 定義optimizer和loss_function
-    optimizer = optim.Adam(model.parameters(), lr=0.00001)
+    optimizer = optim.Adam(model.parameters(), lr=0.000001)
     criterion = torch.nn.CrossEntropyLoss()
 
     # number of epochs to train the model
